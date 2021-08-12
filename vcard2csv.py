@@ -2,6 +2,7 @@
 import vobject
 import glob
 import csv
+import json
 import argparse
 import os.path
 import sys
@@ -11,11 +12,11 @@ import collections
 column_order = [
     'Name',
     'Full name',
-    'Cell phone',
-    'Work phone',
-    'Home phone',
+    #'Cell phone',
+    #'Work phone',
+    #'Home phone',
     'Email',
-    'Note',
+    #'Note',
 ]
 
 def get_phone_numbers(vCard):
@@ -145,12 +146,16 @@ def main():
 
     # Tab separated values are less annoying than comma-separated values.
     with open(args.tsv_file, 'w') as tsv_fp:
-        writer = csv.writer(tsv_fp, delimiter='\t')
-        writer.writerow(column_order)
+        #writer = csv.writer(tsv_fp, delimiter='\t')
+        #writer.writerow(column_order)
+        writer = csv.DictWriter(tsv_fp, fieldnames=column_order)
+        writer.writeheader()
 
         for vcard_path in vcards:
             vcard_info = get_info_list(vcard_path)
-            writer.writerow(list(vcard_info.values()))
+            cjson = json.loads(json.dumps(vcard_info))
+            logging.info(cjson)
+            writer.writerow(cjson)
 
 if __name__ == "__main__":
     main()
